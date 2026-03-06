@@ -1,0 +1,33 @@
+import { Response } from 'express';
+import { AuthRequest } from '../middleware/authMiddleware';
+import { analyzeResumeWithAI } from '../services/aiService';
+import ResumeAnalysis from '../models/ResumeAnalysis';
+
+export const analyzeResume = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+
+    const { resumeText } = req.body;
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
+    }
+    const aiResult = await analyzeResumeWithAI(resumeText);
+    const newAnalysis = new ResumeAnalysis({
+      userId,
+      resumeText,
+      riskScore: aiResult.riskScore,
+      feedback: aiResult.feedback,
+    });
+    await newAnalysis.save();
+    res.status(201).json({
+      success: true,
+      message: "Resume analyzed successfully",
+      data: newAnalysis,
+    });
+
+  } catch (error) {
+    console.error("Analysis Error:", error);
+    res.status(500).json({ success: false, message: "Server Error during analysis" });
+  }
+};
