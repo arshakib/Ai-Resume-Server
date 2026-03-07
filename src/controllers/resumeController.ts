@@ -31,3 +31,20 @@ export const analyzeResume = async (req: AuthRequest, res: Response): Promise<vo
     res.status(500).json({ success: false, message: "Server Error during analysis" });
   }
 };
+
+export const getPremiumTemplates = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    
+    res.status(200).json({
+      success: true,
+      message: "Welcome to the VIP Lounge!",
+      data:[
+        { id: 1, name: "Harvard Executive Template", type: "Tech" },
+        { id: 2, name: "Silicon Valley Startup Template", type: "Creative" },
+      ]
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

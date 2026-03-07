@@ -36,3 +36,21 @@ export const protectRoute = async (req: AuthRequest, res: Response, next: NextFu
     res.status(401).json({ success: false, message: "Not authorized, token failed" });
   }
 };
+
+
+export const authorizeRoles = (...allowedRoles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({ success: false, message: "Not logged in" });
+      return;
+    }
+    if (!allowedRoles.includes(req.user.role)) {
+      res.status(403).json({ 
+        success: false, 
+        message: `Forbidden: Your role (${req.user.role}) is not allowed to access this resource. Please upgrade to Premium.` 
+      });
+      return;
+    }
+    next();
+  };
+};
