@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { analyzeResume, getPremiumTemplates } from '../controllers/resumeController';
+import { analyzeResume, getPremiumTemplates, getResumeHistory } from '../controllers/resumeController';
 import { authorizeRoles, protectRoute } from '../middleware/authMiddleware';
 import { validate } from '../middleware/validate';
 import { analyzeResumeSchema } from '../schemas/resumeSchema';
@@ -12,5 +12,6 @@ router.get(
   authorizeRoles('PREMIUM', 'ADMIN'), 
   getPremiumTemplates
 );
+router.get('/history', protectRoute, getResumeHistory);
 
 export default router;
